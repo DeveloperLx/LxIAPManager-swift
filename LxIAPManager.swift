@@ -4,6 +4,7 @@
 //
 
 import StoreKit
+import CoreGraphics
 
 @objc
 
@@ -74,8 +75,22 @@ class LxIAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObs
     
 //  MARK: - purchase product
     
+    private var INTERVAL_SECONDS: CGFloat = 1.0
+    private var responseEnable = true
+    
     func purchaseProductWithIdentifier(productIdentifier: String) {
     
+        if responseEnable {
+            responseEnable = false
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(INTERVAL_SECONDS * CGFloat(NSEC_PER_SEC)))
+            dispatch_after(delayTime, dispatch_get_main_queue(), { [unowned self] () -> Void in
+                self.responseEnable = true
+            })
+        }
+        else {
+            return
+        }
+        
         var hasUnfinishedTransactions = false
         
         for paymentTransaction in SKPaymentQueue.defaultQueue().transactions {
