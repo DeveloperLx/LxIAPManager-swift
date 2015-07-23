@@ -8,7 +8,7 @@ import CoreGraphics
 
 @objc
 
-protocol LxIAPManagerDelegate: NSObjectProtocol {
+protocol LxIAPManagerDelegate {
 
     optional func iapManager(iapManager: LxIAPManager, didFetchedProductArray productArray: [SKProduct])
     optional func iapManager(iapManager: LxIAPManager, fetchProductsFailedForInvalidProductIdentifiers invalidProductIdentifiers: [String])
