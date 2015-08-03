@@ -5,6 +5,7 @@
 
 import StoreKit
 import CoreGraphics
+import Foundation
 
 @objc
 
@@ -29,9 +30,23 @@ class LxIAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactionObs
         return _defaultManager
     }
     
+    private var _observer: NSObjectProtocol?
+    
     override init() {
         super.init()
         SKPaymentQueue.defaultQueue().addTransactionObserver(self)
+        _observer = NSNotificationCenter.defaultCenter().addObserverForName(UIApplicationDidEnterBackgroundNotification, object: nil, queue: NSOperationQueue.mainQueue(), usingBlock: { (Void) -> Void in
+            
+            for paymentTransaction in SKPaymentQueue.defaultQueue().transactions {
+                
+                SKPaymentQueue.defaultQueue().finishTransaction(paymentTransaction as! SKPaymentTransaction)
+            }
+        })
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(_observer!)
+        _observer = nil
     }
     
     class func iapEnable() -> Bool {
